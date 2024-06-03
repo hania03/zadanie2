@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch: # Dodaj wyzwalacz workflow_dispatch
 
 jobs:
   build:
@@ -28,12 +29,6 @@ jobs:
         run: |
           echo "Running vulnerability scan..."
           docker-scout scan my-image
-
-      - name: Check vulnerability scan results
-        run: |
-          # Use a script or command to check vulnerability scan results
-          # If no high vulnerabilities found, proceed with image publishing
-          # If high vulnerabilities found, exit with a non-zero code
 
       - name: Create and run vulnerability check script
         run: |
