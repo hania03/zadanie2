@@ -1,12 +1,35 @@
-FROM busybox:1.35
+# Wybieranie obrazu bazowego opartego na Ubuntu
+FROM ubuntu:latest
 
-# Create a non-root user to own the httpd server files
-RUN adduser -D static
+# Dodanie Docker Scout do skanowania CVE
+LABEL com.docker.scout.cve='true'
+
+# Aktualizacja listy pakietów
+RUN apt-get update
+
+# Aktualizacja istniejących pakietów
+RUN apt-get upgrade -y
+
+# Instalacja pakietów
+RUN apt-get install -y --no-install-recommends \
+        openssl \
+        expat \
+        sudo \
+        gnupg \
+        git \
+        openssh-client \
+        libsasl2-2
+
+# Usuwanie niepotrzebnych plików
+RUN rm -rf /var/lib/apt/lists/*
+
+# Tworzenie użytkownika i katalogu
+RUN useradd -m static
 USER static
 WORKDIR /home/static
 
-# Copy the page source to declared workdir
-COPY src .
+# Kopiowanie plików do katalogu użytkownika
+COPY . /home/static
 
-# Run BusyBox httpd server
+# Uruchomienie serwera
 CMD ["busybox", "httpd", "-f", "-v", "-p", "3000"]
